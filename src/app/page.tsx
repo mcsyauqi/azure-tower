@@ -2,84 +2,127 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+/* ─────────────────────────── COLORS ─────────────────────────── */
+const COLORS = {
+  primary: '#0078D4',
+  primaryDark: '#005A9E',
+  primaryLight: '#00B4D8',
+  navy: '#1B2838',
+  navyLight: '#243447',
+  white: '#FFFFFF',
+  offWhite: '#F0F8FF',
+  textDark: '#1A1A2E',
+  textMedium: '#4A5568',
+  textLight: '#718096',
+  border: '#E2E8F0',
+};
+
 /* ─────────────────────────── IMAGES ─────────────────────────── */
 const IMAGES = {
   hero: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80',
+  building: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
+  lobby: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80',
   interior1: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
   interior2: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-  interior3: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
   bedroom: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80',
   living: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80',
   pool: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1200&q=80',
-  building: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
-  lobby: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80',
-  architecture: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
+  fitness: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+  garden: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80',
+  cityscape: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=80',
 };
 
-/* ─────────────────────────── RESIDENCES DATA ─────────────────── */
-const RESIDENCES = [
+/* ─────────────────────────── DATA ─────────────────────────── */
+const TOWER_FEATURES = [
   {
-    name: 'The Monolith',
-    type: 'Penthouse',
-    size: '400 sqm',
-    beds: '4 Bedrooms',
-    price: 'From IDR 45B',
-    description:
-      'A singular vision of absolute luxury. Floor-to-ceiling windows frame an unbroken panorama of Jakarta, while bespoke finishes in natural stone and blackened steel create an atmosphere of quiet grandeur.',
-    image: IMAGES.interior1,
+    icon: '🏠',
+    title: 'Smart Home System',
+    description: 'Integrated IoT ecosystem with voice control, automated climate, lighting, and security — all manageable from your smartphone.',
   },
   {
-    name: 'The Canvas',
-    type: 'Premium Residence',
-    size: '200 sqm',
-    beds: '3 Bedrooms',
-    price: 'From IDR 18B',
-    description:
-      'Designed as a blank canvas for refined living. Open-plan spaces flow seamlessly from private quarters to social areas, with curated material palettes that speak to understated elegance.',
-    image: IMAGES.interior2,
+    icon: '🌿',
+    title: 'Green Building',
+    description: 'LEED Gold certified with solar panels, rainwater harvesting, and energy-efficient systems for sustainable luxury living.',
   },
   {
-    name: 'The Frame',
-    type: 'Executive Suite',
-    size: '120 sqm',
-    beds: '2 Bedrooms',
-    price: 'From IDR 9.5B',
-    description:
-      'Every view is framed with intention. Precisely proportioned rooms balance intimacy with openness, featuring handcrafted joinery and integrated lighting that transforms throughout the day.',
-    image: IMAGES.bedroom,
+    icon: '🌇',
+    title: 'Panoramic Views',
+    description: 'Floor-to-ceiling windows on every floor offer breathtaking 270-degree views of the Jakarta skyline and beyond.',
   },
   {
-    name: 'The Line',
-    type: 'Studio',
-    size: '65 sqm',
-    beds: 'Studio',
-    price: 'From IDR 4.8B',
-    description:
-      'The essence of minimalism distilled into a single, perfectly resolved space. Clean lines define zones for rest, work, and contemplation without walls or compromise.',
-    image: IMAGES.living,
+    icon: '🔒',
+    title: '24/7 Security',
+    description: 'Multi-layered security with biometric access, CCTV monitoring, and dedicated security personnel around the clock.',
+  },
+  {
+    icon: '⚡',
+    title: 'High-Speed Connectivity',
+    description: 'Fiber optic internet up to 1 Gbps, 5G-ready infrastructure, and smart building network throughout every unit.',
+  },
+  {
+    icon: '🏗️',
+    title: 'Premium Construction',
+    description: 'Earthquake-resistant structure with premium imported materials, double-glazed windows, and superior acoustic insulation.',
   },
 ];
 
-/* ─────────────────────────── FEATURES DATA ─────────────────────── */
-const FEATURES = [
+const UNIT_TYPES = [
   {
-    num: '01',
-    title: 'Architecture',
-    description:
-      'Inspired by the meditative concrete works of Tadao Ando, Azure Tower rises as a monolithic sculpture against the Jakarta skyline. Raw, board-formed concrete walls meet floor-to-ceiling glass in a dialogue between mass and transparency, earth and sky.',
+    name: 'Studio',
+    size: '35 - 45 sqm',
+    price: 'From IDR 1.2B',
+    beds: 'Studio',
+    bath: '1 Bathroom',
+    features: ['Smart home ready', 'Built-in wardrobe', 'Kitchenette', 'City view'],
+    image: IMAGES.living,
   },
   {
-    num: '02',
-    title: 'Technology',
-    description:
-      'Every residence integrates a bespoke smart home ecosystem. Climate, lighting, security, and entertainment respond to your presence intuitively. Voice, touch, or app - the interface disappears, leaving only the experience.',
+    name: '1 Bedroom',
+    size: '55 - 70 sqm',
+    price: 'From IDR 2.5B',
+    beds: '1 Bedroom',
+    bath: '1 Bathroom',
+    features: ['Separate living area', 'Walk-in closet', 'Full kitchen', 'Balcony'],
+    image: IMAGES.interior2,
   },
   {
-    num: '03',
-    title: 'Sustainability',
-    description:
-      'LEED Platinum certified and engineered for net-zero operation. Solar facade panels, rainwater harvesting, grey-water recycling, and a living green core ensure that luxury and responsibility coexist without compromise.',
+    name: '2 Bedroom',
+    size: '85 - 120 sqm',
+    price: 'From IDR 4.8B',
+    beds: '2 Bedrooms',
+    bath: '2 Bathrooms',
+    features: ['Master suite', 'Family room', 'Service area', 'Double balcony'],
+    image: IMAGES.bedroom,
   },
+  {
+    name: 'Penthouse',
+    size: '200 - 400 sqm',
+    price: 'From IDR 15B',
+    beds: '3-4 Bedrooms',
+    bath: '3-4 Bathrooms',
+    features: ['Private elevator', 'Rooftop terrace', 'Wine cellar', 'Panoramic views'],
+    image: IMAGES.interior1,
+  },
+];
+
+const AMENITIES = [
+  { icon: '🏊', name: 'Infinity Rooftop Pool', description: 'Sky-high pool with panoramic city views' },
+  { icon: '💪', name: 'Fitness Center', description: 'State-of-the-art gym with personal trainers' },
+  { icon: '💻', name: 'Co-Working Space', description: 'Modern workspace with meeting rooms' },
+  { icon: '🌳', name: 'Sky Garden', description: 'Elevated garden oasis for relaxation' },
+  { icon: '🧖', name: 'Spa & Wellness', description: 'Full-service spa with sauna and steam room' },
+  { icon: '👶', name: 'Kids Playground', description: 'Safe indoor and outdoor play areas' },
+  { icon: '🍽️', name: 'Resident Lounge', description: 'Private dining and entertainment space' },
+  { icon: '🚗', name: 'Smart Parking', description: 'Automated multi-level parking system' },
+];
+
+const LOCATION_HIGHLIGHTS = [
+  { label: 'CBD Jakarta', time: '5 min' },
+  { label: 'Soekarno-Hatta Airport', time: '35 min' },
+  { label: 'Premium Shopping Mall', time: '3 min' },
+  { label: 'International School', time: '10 min' },
+  { label: 'Hospital', time: '8 min' },
+  { label: 'MRT Station', time: '2 min' },
 ];
 
 /* ─────────────────────────── SCROLL HOOK ─────────────────────────── */
@@ -94,7 +137,7 @@ function useScrollAnimation() {
           setIsVisible(true);
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
 
     const current = ref.current;
@@ -125,6 +168,8 @@ function Navigation() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const navItems = ['about', 'features', 'units', 'amenities', 'location', 'contact'];
+
   return (
     <nav
       style={{
@@ -133,21 +178,21 @@ function Navigation() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: scrolled ? 'rgba(255,255,255,0.97)' : 'rgba(255,255,255,0.95)',
-        borderBottom: '1px solid #CCCCCC',
-        backdropFilter: 'blur(10px)',
-        animation: 'navSlideDown 0.6s ease forwards',
+        background: scrolled ? 'rgba(255,255,255,0.98)' : 'transparent',
+        borderBottom: scrolled ? `1px solid ${COLORS.border}` : 'none',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        transition: 'all 0.4s ease',
       }}
     >
       <div
         style={{
-          maxWidth: 1400,
+          maxWidth: 1280,
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: 70,
+          height: 72,
         }}
       >
         {/* Logo */}
@@ -156,26 +201,27 @@ function Navigation() {
           onClick={(e) => handleNavClick(e, 'hero')}
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 18,
-            fontWeight: 500,
-            letterSpacing: '0.3em',
-            color: '#111',
+            fontSize: 20,
+            fontWeight: 600,
+            letterSpacing: '0.15em',
+            color: scrolled ? COLORS.navy : COLORS.white,
             textDecoration: 'none',
+            transition: 'color 0.4s ease',
           }}
         >
-          AZURE
+          AZURE<span style={{ color: COLORS.primary, fontWeight: 700 }}>.</span>
         </a>
 
         {/* Desktop Links */}
         <div
           style={{
             display: 'flex',
-            gap: 40,
+            gap: 32,
             alignItems: 'center',
           }}
           className="nav-links-desktop"
         >
-          {['philosophy', 'residences', 'features', 'gallery', 'contact'].map((id) => (
+          {navItems.map((id) => (
             <a
               key={id}
               href={`#${id}`}
@@ -183,19 +229,39 @@ function Navigation() {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: 13,
-                fontWeight: 400,
-                letterSpacing: '0.1em',
-                color: '#888',
+                fontWeight: 500,
+                letterSpacing: '0.05em',
+                color: scrolled ? COLORS.textMedium : 'rgba(255,255,255,0.85)',
                 textDecoration: 'none',
-                textTransform: 'uppercase',
+                textTransform: 'capitalize',
                 transition: 'color 0.3s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#111')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = scrolled ? COLORS.textMedium : 'rgba(255,255,255,0.85)')}
             >
               {id}
             </a>
           ))}
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, 'contact')}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+              color: COLORS.white,
+              background: COLORS.primary,
+              textDecoration: 'none',
+              padding: '10px 24px',
+              borderRadius: 6,
+              transition: 'background 0.3s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = COLORS.primaryDark)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = COLORS.primary)}
+          >
+            Book Visit
+          </a>
         </div>
 
         {/* Mobile Hamburger */}
@@ -211,41 +277,44 @@ function Navigation() {
             padding: 8,
           }}
         >
-          <div style={{ width: 24, position: 'relative', height: 16 }}>
+          <div style={{ width: 24, position: 'relative', height: 18 }}>
             <span
               style={{
                 display: 'block',
                 width: 24,
-                height: 1,
-                background: '#111',
+                height: 2,
+                background: scrolled ? COLORS.navy : COLORS.white,
                 position: 'absolute',
-                top: menuOpen ? 7 : 0,
+                top: menuOpen ? 8 : 0,
                 transition: 'all 0.3s ease',
                 transform: menuOpen ? 'rotate(45deg)' : 'none',
+                borderRadius: 1,
               }}
             />
             <span
               style={{
                 display: 'block',
                 width: 24,
-                height: 1,
-                background: '#111',
+                height: 2,
+                background: scrolled ? COLORS.navy : COLORS.white,
                 position: 'absolute',
-                top: 7,
+                top: 8,
                 opacity: menuOpen ? 0 : 1,
                 transition: 'opacity 0.3s ease',
+                borderRadius: 1,
               }}
             />
             <span
               style={{
                 display: 'block',
                 width: 24,
-                height: 1,
-                background: '#111',
+                height: 2,
+                background: scrolled ? COLORS.navy : COLORS.white,
                 position: 'absolute',
-                top: menuOpen ? 7 : 14,
+                top: menuOpen ? 8 : 16,
                 transition: 'all 0.3s ease',
                 transform: menuOpen ? 'rotate(-45deg)' : 'none',
+                borderRadius: 1,
               }}
             />
           </div>
@@ -258,42 +327,113 @@ function Navigation() {
           className="nav-mobile-menu"
           style={{
             background: 'rgba(255,255,255,0.98)',
-            borderTop: '1px solid #CCCCCC',
-            padding: '30px 40px',
+            backdropFilter: 'blur(12px)',
+            borderTop: `1px solid ${COLORS.border}`,
+            padding: '24px',
             display: 'flex',
             flexDirection: 'column',
-            gap: 24,
+            gap: 20,
           }}
         >
-          {['philosophy', 'residences', 'features', 'gallery', 'contact'].map((id) => (
+          {navItems.map((id) => (
             <a
               key={id}
               href={`#${id}`}
               onClick={(e) => handleNavClick(e, id)}
               style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: 14,
-                fontWeight: 400,
-                letterSpacing: '0.1em',
-                color: '#888',
+                fontSize: 15,
+                fontWeight: 500,
+                color: COLORS.textDark,
                 textDecoration: 'none',
-                textTransform: 'uppercase',
+                textTransform: 'capitalize',
+                padding: '8px 0',
               }}
             >
               {id}
             </a>
           ))}
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, 'contact')}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 14,
+              fontWeight: 600,
+              color: COLORS.white,
+              background: COLORS.primary,
+              textDecoration: 'none',
+              padding: '12px 24px',
+              borderRadius: 6,
+              textAlign: 'center',
+              marginTop: 8,
+            }}
+          >
+            Book a Visit
+          </a>
         </div>
       )}
-
-      {/* Responsive Styles */}
-      <style>{`
-        @media (max-width: 768px) {
-          .nav-links-desktop { display: none !important; }
-          .nav-hamburger { display: block !important; }
-        }
-      `}</style>
     </nav>
+  );
+}
+
+/* ─────────────────────────── SECTION HEADER ─────────────────────────── */
+function SectionHeader({
+  label,
+  title,
+  subtitle,
+  light = false,
+  center = true,
+}: {
+  label: string;
+  title: string;
+  subtitle?: string;
+  light?: boolean;
+  center?: boolean;
+}) {
+  return (
+    <div style={{ textAlign: center ? 'center' : 'left', marginBottom: 64 }}>
+      <p
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 600,
+          letterSpacing: '0.15em',
+          color: light ? COLORS.primaryLight : COLORS.primary,
+          textTransform: 'uppercase',
+          marginBottom: 16,
+        }}
+      >
+        {label}
+      </p>
+      <h2
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 'clamp(28px, 4vw, 48px)',
+          fontWeight: 600,
+          color: light ? COLORS.white : COLORS.textDark,
+          lineHeight: 1.2,
+          marginBottom: subtitle ? 20 : 0,
+        }}
+      >
+        {title}
+      </h2>
+      {subtitle && (
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 'clamp(15px, 1.2vw, 18px)',
+            fontWeight: 400,
+            color: light ? 'rgba(255,255,255,0.7)' : COLORS.textLight,
+            lineHeight: 1.7,
+            maxWidth: 640,
+            margin: center ? '0 auto' : undefined,
+          }}
+        >
+          {subtitle}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -303,431 +443,392 @@ function HeroSection() {
     <section
       id="hero"
       style={{
+        position: 'relative',
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: '#fff',
-        paddingTop: 70,
+        justifyContent: 'center',
         overflow: 'hidden',
       }}
     >
+      {/* Background Image */}
       <div
         style={{
-          maxWidth: 1400,
-          margin: '0 auto',
-          padding: '0 40px',
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 60,
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
         }}
-        className="hero-inner"
       >
-        {/* Left: Typography */}
-        <div style={{ flex: '1 1 50%' }} className="hero-text">
-          <h1
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(72px, 10vw, 140px)',
-              fontWeight: 300,
-              color: '#111',
-              lineHeight: 0.9,
-              letterSpacing: '-0.02em',
-              marginBottom: 16,
-            }}
-          >
-            AZURE
-          </h1>
-          <p
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(16px, 2vw, 24px)',
-              fontWeight: 400,
-              letterSpacing: '0.3em',
-              color: '#888',
-              marginBottom: 40,
-            }}
-          >
-            TOWER JAKARTA
-          </p>
-          <div
-            style={{
-              width: 80,
-              height: 1,
-              background: '#CCC',
-              marginBottom: 32,
-              animation: 'expandWidth 1s ease forwards',
-            }}
-          />
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(14px, 1.2vw, 18px)',
-              fontWeight: 300,
-              color: '#888',
-              lineHeight: 1.8,
-              maxWidth: 400,
-            }}
-          >
-            Redefining minimalism in luxury living
-          </p>
-        </div>
-
-        {/* Right: Image */}
-        <div style={{ flex: '1 1 50%', position: 'relative' }} className="hero-image-wrap">
-          <img
-            src={IMAGES.hero}
-            alt="Azure Tower Jakarta exterior"
-            className="img-mono"
-            style={{
-              width: '100%',
-              height: '80vh',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
-        </div>
+        <img
+          src={IMAGES.hero}
+          alt="Azure Tower modern skyscraper"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+        {/* Gradient Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(0,120,212,0.85) 0%, rgba(27,40,56,0.92) 100%)',
+          }}
+        />
       </div>
 
-      <style>{`
-        @media (max-width: 900px) {
-          .hero-inner {
-            flex-direction: column !important;
-            text-align: center !important;
-            padding-top: 40px !important;
-            gap: 40px !important;
-          }
-          .hero-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          }
-          .hero-image-wrap img {
-            height: 50vh !important;
-          }
-        }
-      `}</style>
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: 1280,
+          margin: '0 auto',
+          padding: '0 24px',
+          width: '100%',
+          textAlign: 'center',
+          paddingTop: 72,
+        }}
+        className="hero-content"
+      >
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 14,
+            fontWeight: 500,
+            letterSpacing: '0.25em',
+            color: COLORS.primaryLight,
+            textTransform: 'uppercase',
+            marginBottom: 24,
+            opacity: 1,
+            animation: 'fadeInUp 0.8s ease forwards',
+          }}
+        >
+          Luxury High-Rise Living in Jakarta
+        </p>
+
+        <h1
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 'clamp(48px, 8vw, 96px)',
+            fontWeight: 700,
+            color: COLORS.white,
+            lineHeight: 1.05,
+            letterSpacing: '-0.02em',
+            marginBottom: 24,
+            opacity: 1,
+            animation: 'fadeInUp 0.8s ease 0.15s both',
+          }}
+        >
+          AZURE TOWER
+        </h1>
+
+        <p
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 'clamp(16px, 1.5vw, 22px)',
+            fontWeight: 300,
+            color: 'rgba(255,255,255,0.8)',
+            lineHeight: 1.6,
+            maxWidth: 600,
+            margin: '0 auto',
+            marginBottom: 48,
+            opacity: 1,
+            animation: 'fadeInUp 0.8s ease 0.3s both',
+          }}
+        >
+          Where modern architecture meets sky-blue elegance.
+          <br />
+          A new landmark of refined urban living.
+        </p>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 16,
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            opacity: 1,
+            animation: 'fadeInUp 0.8s ease 0.45s both',
+          }}
+        >
+          <a
+            href="#units"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 15,
+              fontWeight: 600,
+              color: COLORS.white,
+              background: COLORS.primary,
+              padding: '16px 36px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+              border: `2px solid ${COLORS.primary}`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = COLORS.primaryDark;
+              e.currentTarget.style.borderColor = COLORS.primaryDark;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = COLORS.primary;
+              e.currentTarget.style.borderColor = COLORS.primary;
+            }}
+          >
+            Explore Units
+          </a>
+          <a
+            href="#contact"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 15,
+              fontWeight: 600,
+              color: COLORS.white,
+              background: 'transparent',
+              padding: '16px 36px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+              border: '2px solid rgba(255,255,255,0.4)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)';
+            }}
+          >
+            Schedule a Visit
+          </a>
+        </div>
+
+        {/* Stats bar */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 48,
+            marginTop: 80,
+            flexWrap: 'wrap',
+            opacity: 1,
+            animation: 'fadeInUp 0.8s ease 0.6s both',
+          }}
+          className="hero-stats"
+        >
+          {[
+            { value: '45', label: 'Floors' },
+            { value: '320+', label: 'Units' },
+            { value: '2026', label: 'Completion' },
+            { value: 'LEED', label: 'Gold Certified' },
+          ].map((stat) => (
+            <div key={stat.label} style={{ textAlign: 'center' }}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 'clamp(28px, 3vw, 40px)',
+                  fontWeight: 700,
+                  color: COLORS.white,
+                  lineHeight: 1,
+                  marginBottom: 8,
+                }}
+              >
+                {stat.value}
+              </p>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  color: 'rgba(255,255,255,0.6)',
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
 
-/* ─────────────────────────── PHILOSOPHY SECTION ─────────────────── */
-function PhilosophySection() {
+/* ─────────────────────────── ABOUT SECTION ─────────────────────────── */
+function AboutSection() {
   const anim = useScrollAnimation();
 
   return (
     <section
-      id="philosophy"
+      id="about"
       style={{
-        background: '#fff',
-        padding: '120px 0',
-        borderTop: '1px solid #CCCCCC',
+        background: COLORS.white,
+        padding: '80px 0',
       }}
+      className="section-padding"
     >
       <div
         ref={anim.ref}
         style={{
-          maxWidth: 1400,
+          maxWidth: 1280,
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 24px',
           display: 'flex',
-          gap: 80,
-          alignItems: 'stretch',
-          opacity: anim.isVisible ? 1 : 0.3,
-          transition: 'opacity 0.8s ease',
+          gap: 64,
+          alignItems: 'center',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
         }}
-        className="philosophy-inner"
+        className="about-inner"
       >
         {/* Left: Image */}
-        <div
-          style={{ flex: '1 1 45%', minHeight: 500 }}
-          className="philosophy-image"
-        >
-          <img
-            src={IMAGES.lobby}
-            alt="Azure Tower lobby interior"
-            className="img-mono"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
+        <div style={{ flex: '1 1 45%' }} className="about-image">
+          <div style={{ position: 'relative' }}>
+            <img
+              src={IMAGES.building}
+              alt="Azure Tower architecture"
+              style={{
+                width: '100%',
+                height: 520,
+                objectFit: 'cover',
+                display: 'block',
+                borderRadius: 12,
+              }}
+            />
+            {/* Accent bar */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: -16,
+                left: 32,
+                right: 32,
+                height: 4,
+                background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.primaryLight})`,
+                borderRadius: 2,
+              }}
+            />
+          </div>
         </div>
 
         {/* Right: Text */}
         <div
           style={{
             flex: '1 1 55%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            paddingRight: 40,
           }}
-          className="philosophy-text"
+          className="about-text"
         >
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.2em',
-              color: '#888',
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              color: COLORS.primary,
               textTransform: 'uppercase',
-              marginBottom: 40,
+              marginBottom: 16,
             }}
           >
-            Our Philosophy
+            About Azure Tower
           </p>
           <h2
             style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(28px, 3.5vw, 48px)',
-              fontWeight: 300,
-              color: '#111',
+              fontSize: 'clamp(28px, 3.5vw, 44px)',
+              fontWeight: 600,
+              color: COLORS.textDark,
               lineHeight: 1.2,
-              marginBottom: 40,
+              marginBottom: 24,
             }}
           >
-            Less is the
+            A Vision of Modern
             <br />
-            ultimate luxury.
+            Architectural Excellence
           </h2>
           <div
-            style={{ width: 60, height: 1, background: '#CCC', marginBottom: 40 }}
+            style={{
+              width: 60,
+              height: 3,
+              background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.primaryLight})`,
+              borderRadius: 2,
+              marginBottom: 28,
+            }}
           />
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: 16,
-              fontWeight: 300,
-              color: '#888',
-              lineHeight: 1.9,
-              marginBottom: 24,
+              fontWeight: 400,
+              color: COLORS.textMedium,
+              lineHeight: 1.8,
+              marginBottom: 20,
             }}
           >
-            Azure Tower was born from a singular conviction: that true luxury is not
-            about excess, but about the precise removal of everything unnecessary.
-            Every surface, every proportion, every material has been considered and
-            reconsidered until only the essential remains.
+            Azure Tower rises 45 stories above the Jakarta skyline, a testament to the
+            belief that exceptional design elevates every aspect of daily life. Conceived
+            by internationally acclaimed architects, every line and surface has been
+            crafted with precision and purpose.
           </p>
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: 16,
-              fontWeight: 300,
-              color: '#888',
-              lineHeight: 1.9,
+              fontWeight: 400,
+              color: COLORS.textMedium,
+              lineHeight: 1.8,
+              marginBottom: 32,
             }}
           >
-            Drawing from the contemplative architecture of Tadao Ando and the
-            spatial purity of John Pawson, we have created residences where silence
-            speaks, where light becomes the primary material, and where the boundary
-            between interior and sky dissolves entirely.
+            The tower&apos;s distinctive glass facade reflects the sky in ever-changing shades
+            of azure, creating a living canvas that evolves with the light. Inside,
+            thoughtfully designed residences blend contemporary aesthetics with
+            intuitive technology for a truly modern lifestyle.
           </p>
+          <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+            {[
+              { value: '45', label: 'Storeys' },
+              { value: '320+', label: 'Premium Units' },
+              { value: '8', label: 'Amenity Floors' },
+            ].map((item) => (
+              <div key={item.label}>
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 32,
+                    fontWeight: 700,
+                    color: COLORS.primary,
+                    lineHeight: 1,
+                    marginBottom: 4,
+                  }}
+                >
+                  {item.value}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: COLORS.textLight,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          .philosophy-inner {
-            flex-direction: column !important;
-            gap: 40px !important;
-          }
-          .philosophy-image {
-            min-height: 350px !important;
-          }
-          .philosophy-text {
-            padding-right: 0 !important;
-          }
-        }
-      `}</style>
-    </section>
-  );
-}
-
-/* ─────────────────────────── RESIDENCES SECTION ─────────────────── */
-function ResidencesSection() {
-  const anim = useScrollAnimation();
-
-  return (
-    <section
-      id="residences"
-      style={{
-        background: '#F5F5F5',
-        padding: '120px 0',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1400,
-          margin: '0 auto',
-          padding: '0 40px',
-        }}
-      >
-        {/* Header */}
-        <div
-          ref={anim.ref}
-          style={{
-            marginBottom: 80,
-            opacity: anim.isVisible ? 1 : 0.3,
-            transition: 'opacity 0.8s ease',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.2em',
-              color: '#888',
-              textTransform: 'uppercase',
-              marginBottom: 24,
-            }}
-          >
-            Residences
-          </p>
-          <h2
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(28px, 3.5vw, 48px)',
-              fontWeight: 300,
-              color: '#111',
-              lineHeight: 1.2,
-            }}
-          >
-            Four ways to live
-            <br />
-            without compromise.
-          </h2>
-        </div>
-
-        {/* Residence Rows */}
-        {RESIDENCES.map((res, i) => (
-          <ResidenceRow key={res.name} residence={res} index={i} />
-        ))}
       </div>
     </section>
   );
 }
 
-function ResidenceRow({
-  residence,
-  index,
-}: {
-  residence: (typeof RESIDENCES)[number];
-  index: number;
-}) {
-  const anim = useScrollAnimation();
-
-  return (
-    <div
-      ref={anim.ref}
-      style={{
-        borderTop: '1px solid #CCCCCC',
-        padding: '60px 0',
-        display: 'flex',
-        gap: 60,
-        alignItems: 'center',
-        opacity: anim.isVisible ? 1 : 0.3,
-        transform: anim.isVisible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`,
-      }}
-      className="residence-row"
-    >
-      {/* Image */}
-      <div style={{ flex: '0 0 40%' }} className="residence-img-wrap">
-        <img
-          src={residence.image}
-          alt={residence.name}
-          className="img-mono"
-          style={{
-            width: '100%',
-            height: 320,
-            objectFit: 'cover',
-            display: 'block',
-          }}
-        />
-      </div>
-
-      {/* Text */}
-      <div style={{ flex: '1 1 60%' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: 16,
-            marginBottom: 16,
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(24px, 2.5vw, 36px)',
-              fontWeight: 400,
-              color: '#111',
-            }}
-          >
-            {residence.name}
-          </h3>
-          <span
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 12,
-              fontWeight: 400,
-              letterSpacing: '0.1em',
-              color: '#888',
-              textTransform: 'uppercase',
-            }}
-          >
-            {residence.type}
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: 32,
-            marginBottom: 24,
-            flexWrap: 'wrap',
-          }}
-        >
-          {[residence.size, residence.beds, residence.price].map((item) => (
-            <span
-              key={item}
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 13,
-                fontWeight: 400,
-                color: '#888',
-                letterSpacing: '0.05em',
-              }}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 15,
-            fontWeight: 300,
-            color: '#888',
-            lineHeight: 1.8,
-            maxWidth: 520,
-          }}
-        >
-          {residence.description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────── FEATURES SECTION ─────────────────────── */
+/* ─────────────────────────── FEATURES SECTION ─────────────────────────── */
 function FeaturesSection() {
   const anim = useScrollAnimation();
 
@@ -735,382 +836,806 @@ function FeaturesSection() {
     <section
       id="features"
       style={{
-        background: '#fff',
-        padding: '120px 0',
-        borderTop: '1px solid #CCCCCC',
+        background: COLORS.offWhite,
+        padding: '80px 0',
       }}
-    >
-      <div
-        style={{
-          maxWidth: 1400,
-          margin: '0 auto',
-          padding: '0 40px',
-        }}
-      >
-        {/* Header */}
-        <div
-          ref={anim.ref}
-          style={{
-            marginBottom: 80,
-            opacity: anim.isVisible ? 1 : 0.3,
-            transition: 'opacity 0.8s ease',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.2em',
-              color: '#888',
-              textTransform: 'uppercase',
-              marginBottom: 24,
-            }}
-          >
-            Distinction
-          </p>
-          <h2
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(28px, 3.5vw, 48px)',
-              fontWeight: 300,
-              color: '#111',
-              lineHeight: 1.2,
-            }}
-          >
-            Built on three
-            <br />
-            principles.
-          </h2>
-        </div>
-
-        {/* Three Columns */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 60,
-          }}
-          className="features-grid"
-        >
-          {FEATURES.map((feature, i) => (
-            <FeatureColumn key={feature.num} feature={feature} index={i} />
-          ))}
-        </div>
-      </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          .features-grid {
-            grid-template-columns: 1fr !important;
-            gap: 60px !important;
-          }
-        }
-      `}</style>
-    </section>
-  );
-}
-
-function FeatureColumn({
-  feature,
-  index,
-}: {
-  feature: (typeof FEATURES)[number];
-  index: number;
-}) {
-  const anim = useScrollAnimation();
-
-  return (
-    <div
-      ref={anim.ref}
-      style={{
-        position: 'relative',
-        opacity: anim.isVisible ? 1 : 0.3,
-        transform: anim.isVisible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s ease ${index * 0.15}s, transform 0.8s ease ${index * 0.15}s`,
-      }}
-    >
-      {/* Large background number */}
-      <span
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 'clamp(80px, 8vw, 120px)',
-          fontWeight: 300,
-          color: '#F0F0F0',
-          position: 'absolute',
-          top: -30,
-          left: -10,
-          lineHeight: 1,
-          zIndex: 0,
-          userSelect: 'none',
-        }}
-      >
-        {feature.num}
-      </span>
-
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, paddingTop: 50 }}>
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.15em',
-            color: '#888',
-            marginBottom: 12,
-          }}
-        >
-          {feature.num}
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-          <div style={{ width: 30, height: 1, background: '#CCC' }} />
-          <h3
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(20px, 2vw, 28px)',
-              fontWeight: 400,
-              color: '#111',
-            }}
-          >
-            {feature.title}
-          </h3>
-        </div>
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 15,
-            fontWeight: 300,
-            color: '#888',
-            lineHeight: 1.9,
-          }}
-        >
-          {feature.description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────── GALLERY SECTION ─────────────────────── */
-function GallerySection() {
-  const anim = useScrollAnimation();
-
-  return (
-    <section
-      id="gallery"
-      style={{
-        background: '#fff',
-        padding: '120px 0',
-        borderTop: '1px solid #CCCCCC',
-      }}
+      className="section-padding"
     >
       <div
         ref={anim.ref}
         style={{
-          maxWidth: 1400,
+          maxWidth: 1280,
           margin: '0 auto',
-          padding: '0 40px',
-          opacity: anim.isVisible ? 1 : 0.3,
-          transition: 'opacity 1s ease',
+          padding: '0 24px',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
         }}
       >
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.2em',
-            color: '#888',
-            textTransform: 'uppercase',
-            marginBottom: 40,
-          }}
-        >
-          Gallery
-        </p>
+        <SectionHeader
+          label="Tower Features"
+          title="Built for the Future"
+          subtitle="Azure Tower integrates cutting-edge technology with sustainable design, delivering an unparalleled living experience."
+        />
 
-        {/* Full-width image */}
-        <div style={{ position: 'relative' }}>
-          <img
-            src={IMAGES.pool}
-            alt="Azure Tower infinity pool overlooking Jakarta"
-            className="img-mono"
-            style={{
-              width: '100%',
-              height: 'clamp(300px, 50vw, 600px)',
-              objectFit: 'cover',
-              display: 'block',
-              transition: 'filter 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          />
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 28,
+          }}
+          className="features-grid"
+        >
+          {TOWER_FEATURES.map((feature, i) => (
+            <div
+              key={feature.title}
+              style={{
+                background: COLORS.white,
+                borderRadius: 12,
+                padding: 32,
+                borderTop: `3px solid ${COLORS.primary}`,
+                boxShadow: '0 2px 16px rgba(0,120,212,0.06)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                opacity: anim.isVisible ? 1 : 0,
+                transform: anim.isVisible ? 'translateY(0)' : 'translateY(20px)',
+                transitionDelay: `${i * 0.08}s`,
+              }}
+              className="feature-card"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,120,212,0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,120,212,0.06)';
+              }}
+            >
+              <span style={{ fontSize: 36, display: 'block', marginBottom: 16 }}>{feature.icon}</span>
+              <h3
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 20,
+                  fontWeight: 600,
+                  color: COLORS.textDark,
+                  marginBottom: 12,
+                }}
+              >
+                {feature.title}
+              </h3>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 400,
+                  color: COLORS.textLight,
+                  lineHeight: 1.7,
+                }}
+              >
+                {feature.description}
+              </p>
+            </div>
+          ))}
         </div>
-
-        {/* Caption */}
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 13,
-            fontWeight: 300,
-            color: '#888',
-            marginTop: 24,
-            letterSpacing: '0.05em',
-          }}
-        >
-          The infinity-edge pool extends toward the horizon, blurring the boundary
-          between water and sky — a daily meditation in architectural stillness.
-        </p>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────────── CONTACT SECTION ─────────────────────── */
+/* ─────────────────────────── UNITS SECTION ─────────────────────────── */
+function UnitsSection() {
+  const anim = useScrollAnimation();
+
+  return (
+    <section
+      id="units"
+      style={{
+        background: COLORS.white,
+        padding: '80px 0',
+      }}
+      className="section-padding"
+    >
+      <div
+        ref={anim.ref}
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          padding: '0 24px',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
+        }}
+      >
+        <SectionHeader
+          label="Residences"
+          title="Find Your Perfect Space"
+          subtitle="From efficient studios to expansive penthouses, every unit is designed with meticulous attention to detail and bathed in natural light."
+        />
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 24,
+          }}
+          className="units-grid"
+        >
+          {UNIT_TYPES.map((unit, i) => (
+            <div
+              key={unit.name}
+              style={{
+                background: COLORS.white,
+                borderRadius: 12,
+                overflow: 'hidden',
+                border: `1px solid ${COLORS.border}`,
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                opacity: anim.isVisible ? 1 : 0,
+                transform: anim.isVisible ? 'translateY(0)' : 'translateY(20px)',
+                transitionDelay: `${i * 0.1}s`,
+              }}
+              className="unit-card"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,120,212,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {/* Image */}
+              <div style={{ position: 'relative', overflow: 'hidden' }}>
+                <img
+                  src={unit.image}
+                  alt={`Azure Tower ${unit.name}`}
+                  style={{
+                    width: '100%',
+                    height: 200,
+                    objectFit: 'cover',
+                    display: 'block',
+                    transition: 'transform 0.5s ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    background: COLORS.primary,
+                    color: COLORS.white,
+                    padding: '6px 14px',
+                    borderRadius: 20,
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  {unit.price}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: 24 }}>
+                <h3
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 22,
+                    fontWeight: 600,
+                    color: COLORS.textDark,
+                    marginBottom: 8,
+                  }}
+                >
+                  {unit.name}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14,
+                    color: COLORS.textLight,
+                    marginBottom: 4,
+                  }}
+                >
+                  {unit.size} &middot; {unit.beds}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14,
+                    color: COLORS.textLight,
+                    marginBottom: 16,
+                  }}
+                >
+                  {unit.bath}
+                </p>
+
+                {/* Features */}
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {unit.features.map((feat) => (
+                    <li
+                      key={feat}
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 13,
+                        color: COLORS.textMedium,
+                        padding: '6px 0',
+                        borderBottom: `1px solid ${COLORS.border}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ color: COLORS.primary, fontSize: 14 }}>&#10003;</span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href="#contact"
+                  style={{
+                    display: 'block',
+                    textAlign: 'center',
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: COLORS.primary,
+                    border: `2px solid ${COLORS.primary}`,
+                    padding: '12px 0',
+                    borderRadius: 8,
+                    textDecoration: 'none',
+                    marginTop: 20,
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = COLORS.primary;
+                    e.currentTarget.style.color = COLORS.white;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = COLORS.primary;
+                  }}
+                >
+                  Learn More
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────── AMENITIES SECTION (DARK) ─────────────────── */
+function AmenitiesSection() {
+  const anim = useScrollAnimation();
+
+  return (
+    <section
+      id="amenities"
+      style={{
+        background: COLORS.navy,
+        padding: '80px 0',
+        position: 'relative',
+      }}
+      className="section-padding"
+    >
+      <div
+        ref={anim.ref}
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          padding: '0 24px',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
+        }}
+      >
+        <SectionHeader
+          label="Amenities"
+          title="World-Class Lifestyle Facilities"
+          subtitle="Every floor offers a curated experience designed around comfort, wellness, and community."
+          light
+        />
+
+        {/* Amenities Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 24,
+            marginBottom: 64,
+          }}
+          className="amenities-grid"
+        >
+          {AMENITIES.map((amenity, i) => (
+            <div
+              key={amenity.name}
+              style={{
+                background: COLORS.navyLight,
+                borderRadius: 12,
+                padding: 28,
+                border: '1px solid rgba(255,255,255,0.08)',
+                transition: 'all 0.3s ease',
+                opacity: anim.isVisible ? 1 : 0,
+                transform: anim.isVisible ? 'translateY(0)' : 'translateY(20px)',
+                transitionDelay: `${i * 0.06}s`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0,120,212,0.4)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <span style={{ fontSize: 32, display: 'block', marginBottom: 16 }}>{amenity.icon}</span>
+              <h4
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 17,
+                  fontWeight: 600,
+                  color: COLORS.white,
+                  marginBottom: 8,
+                }}
+              >
+                {amenity.name}
+              </h4>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  color: 'rgba(255,255,255,0.55)',
+                  lineHeight: 1.6,
+                }}
+              >
+                {amenity.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pool Image Banner */}
+        <div style={{ borderRadius: 12, overflow: 'hidden', position: 'relative' }}>
+          <img
+            src={IMAGES.pool}
+            alt="Azure Tower infinity rooftop pool"
+            style={{
+              width: '100%',
+              height: 'clamp(250px, 35vw, 450px)',
+              objectFit: 'cover',
+              display: 'block',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(180deg, transparent 40%, rgba(27,40,56,0.8) 100%)',
+              display: 'flex',
+              alignItems: 'flex-end',
+              padding: 40,
+            }}
+          >
+            <div>
+              <h3
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 'clamp(24px, 3vw, 36px)',
+                  fontWeight: 600,
+                  color: COLORS.white,
+                  marginBottom: 8,
+                }}
+              >
+                Infinity Rooftop Pool
+              </h3>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 15,
+                  color: 'rgba(255,255,255,0.7)',
+                }}
+              >
+                Swim above the clouds with breathtaking 360-degree city views.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────── LOCATION SECTION ─────────────────────────── */
+function LocationSection() {
+  const anim = useScrollAnimation();
+
+  return (
+    <section
+      id="location"
+      style={{
+        background: COLORS.offWhite,
+        padding: '80px 0',
+      }}
+      className="section-padding"
+    >
+      <div
+        ref={anim.ref}
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          padding: '0 24px',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
+        }}
+      >
+        <SectionHeader
+          label="Location"
+          title="Perfectly Connected"
+          subtitle="Situated in the heart of Jakarta's most prestigious district, Azure Tower places you at the center of everything."
+        />
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 48,
+            alignItems: 'stretch',
+          }}
+          className="location-inner"
+        >
+          {/* Map / Image */}
+          <div style={{ flex: '1 1 55%' }} className="location-image">
+            <div style={{ borderRadius: 12, overflow: 'hidden', height: '100%', minHeight: 400 }}>
+              <img
+                src={IMAGES.cityscape}
+                alt="Jakarta city skyline near Azure Tower"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Connectivity */}
+          <div
+            style={{
+              flex: '1 1 45%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+            className="location-details"
+          >
+            <h3
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 24,
+                fontWeight: 600,
+                color: COLORS.textDark,
+                marginBottom: 8,
+              }}
+            >
+              Prime CBD Location
+            </h3>
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 15,
+                color: COLORS.textLight,
+                lineHeight: 1.7,
+                marginBottom: 32,
+              }}
+            >
+              Direct access to Jakarta&apos;s business hub, premium dining, world-class
+              shopping, and excellent transport links.
+            </p>
+
+            {/* Distance items */}
+            {LOCATION_HIGHLIGHTS.map((loc) => (
+              <div
+                key={loc.label}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px 0',
+                  borderBottom: `1px solid ${COLORS.border}`,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: COLORS.textDark,
+                  }}
+                >
+                  {loc.label}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    color: COLORS.primary,
+                    background: `${COLORS.primary}10`,
+                    padding: '6px 16px',
+                    borderRadius: 20,
+                  }}
+                >
+                  {loc.time}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────── CONTACT / CTA SECTION ─────────────────────────── */
 function ContactSection() {
   const anim = useScrollAnimation();
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', unit: '' });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    if (formData.name && formData.email) {
       setSubmitted(true);
-      setEmail('');
-      setTimeout(() => setSubmitted(false), 3000);
+      setFormData({ name: '', email: '', phone: '', unit: '' });
+      setTimeout(() => setSubmitted(false), 4000);
     }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '14px 16px',
+    fontFamily: "'Inter', sans-serif",
+    fontSize: 15,
+    fontWeight: 400,
+    color: COLORS.textDark,
+    background: COLORS.white,
+    border: `1px solid ${COLORS.border}`,
+    borderRadius: 8,
+    outline: 'none',
+    transition: 'border-color 0.3s ease',
   };
 
   return (
     <section
       id="contact"
       style={{
-        background: '#fff',
-        padding: '120px 0',
-        borderTop: '1px solid #CCCCCC',
+        background: COLORS.white,
+        padding: '80px 0',
       }}
+      className="section-padding"
     >
       <div
         ref={anim.ref}
         style={{
-          maxWidth: 600,
+          maxWidth: 1280,
           margin: '0 auto',
-          padding: '0 40px',
-          textAlign: 'center',
-          opacity: anim.isVisible ? 1 : 0.3,
-          transition: 'opacity 0.8s ease',
+          padding: '0 24px',
+          opacity: anim.isVisible ? 1 : 0,
+          transform: anim.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
         }}
       >
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.2em',
-            color: '#888',
-            textTransform: 'uppercase',
-            marginBottom: 24,
-          }}
-        >
-          Private Viewing
-        </p>
-        <h2
-          style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 'clamp(36px, 5vw, 64px)',
-            fontWeight: 300,
-            color: '#111',
-            marginBottom: 24,
-          }}
-        >
-          Inquire
-        </h2>
         <div
           style={{
-            width: 60,
-            height: 1,
-            background: '#CCC',
-            margin: '0 auto 40px',
+            display: 'flex',
+            gap: 64,
+            alignItems: 'center',
           }}
-        />
-        <p
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 15,
-            fontWeight: 300,
-            color: '#888',
-            lineHeight: 1.8,
-            marginBottom: 48,
-          }}
+          className="contact-inner"
         >
-          Register your interest for a private consultation
-          <br />
-          with our residential specialists.
-        </p>
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 24 }}>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              required
+          {/* Left: CTA Copy */}
+          <div style={{ flex: '1 1 50%' }} className="contact-text">
+            <p
               style={{
-                width: '100%',
-                padding: '16px 0',
                 fontFamily: "'Inter', sans-serif",
-                fontSize: 15,
-                fontWeight: 300,
-                color: '#111',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: '1px solid #111',
-                outline: 'none',
-                textAlign: 'center',
-                letterSpacing: '0.05em',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: '0.15em',
+                color: COLORS.primary,
+                textTransform: 'uppercase',
+                marginBottom: 16,
               }}
-            />
+            >
+              Get in Touch
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 'clamp(32px, 4vw, 48px)',
+                fontWeight: 600,
+                color: COLORS.textDark,
+                lineHeight: 1.2,
+                marginBottom: 24,
+              }}
+            >
+              Begin Your Life
+              <br />
+              Above the Clouds
+            </h2>
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 16,
+                fontWeight: 400,
+                color: COLORS.textMedium,
+                lineHeight: 1.8,
+                marginBottom: 32,
+              }}
+            >
+              Schedule a private viewing of our show units or speak with our
+              residential consultants to find the perfect home at Azure Tower.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                { label: 'Sales Gallery', value: 'SCBD Lot 18, Jakarta Selatan' },
+                { label: 'Phone', value: '+62 21 5088 8800' },
+                { label: 'Email', value: 'living@azuretower.id' },
+                { label: 'Hours', value: 'Mon - Sun, 09:00 - 18:00' },
+              ].map((item) => (
+                <div key={item.label} style={{ display: 'flex', gap: 16 }}>
+                  <span
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: COLORS.textDark,
+                      minWidth: 100,
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 14,
+                      color: COLORS.textLight,
+                    }}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button
-            type="submit"
+          {/* Right: Form */}
+          <div
             style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 13,
-              fontWeight: 500,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#fff',
-              background: '#111',
-              border: '1px solid #111',
-              padding: '18px 48px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
+              flex: '1 1 50%',
+              background: COLORS.offWhite,
+              borderRadius: 16,
+              padding: 40,
+              border: `1px solid ${COLORS.border}`,
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#fff';
-              e.currentTarget.style.color = '#111';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#111';
-              e.currentTarget.style.color = '#fff';
-            }}
+            className="contact-form"
           >
-            Request Information
-          </button>
-
-          {submitted && (
+            <h3
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 24,
+                fontWeight: 600,
+                color: COLORS.textDark,
+                marginBottom: 8,
+              }}
+            >
+              Schedule a Visit
+            </h3>
             <p
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: 14,
-                fontWeight: 300,
-                color: '#888',
-                marginTop: 24,
+                color: COLORS.textLight,
+                marginBottom: 28,
               }}
             >
-              Thank you. We will be in touch shortly.
+              Fill in your details and our team will contact you shortly.
             </p>
-          )}
-        </form>
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <input
+                type="text"
+                placeholder="Full Name *"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                style={inputStyle}
+                onFocus={(e) => (e.currentTarget.style.borderColor = COLORS.primary)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = COLORS.border)}
+              />
+              <input
+                type="email"
+                placeholder="Email Address *"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+                style={inputStyle}
+                onFocus={(e) => (e.currentTarget.style.borderColor = COLORS.primary)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = COLORS.border)}
+              />
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                style={inputStyle}
+                onFocus={(e) => (e.currentTarget.style.borderColor = COLORS.primary)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = COLORS.border)}
+              />
+              <select
+                value={formData.unit}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                style={{
+                  ...inputStyle,
+                  color: formData.unit ? COLORS.textDark : COLORS.textLight,
+                  appearance: 'none',
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 16px center',
+                  paddingRight: 40,
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = COLORS.primary)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = COLORS.border)}
+              >
+                <option value="">Interested Unit Type</option>
+                <option value="studio">Studio</option>
+                <option value="1br">1 Bedroom</option>
+                <option value="2br">2 Bedroom</option>
+                <option value="penthouse">Penthouse</option>
+              </select>
+
+              <button
+                type="submit"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: COLORS.white,
+                  background: COLORS.primary,
+                  border: 'none',
+                  padding: '16px 0',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  transition: 'background 0.3s ease',
+                  marginTop: 8,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = COLORS.primaryDark)}
+                onMouseLeave={(e) => (e.currentTarget.style.background = COLORS.primary)}
+              >
+                Submit Inquiry
+              </button>
+
+              {submitted && (
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: '#10B981',
+                    textAlign: 'center',
+                    marginTop: 8,
+                  }}
+                >
+                  Thank you! Our team will contact you within 24 hours.
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -1121,66 +1646,232 @@ function Footer() {
   return (
     <footer
       style={{
-        background: '#000',
-        padding: '60px 40px',
-        textAlign: 'center',
+        background: COLORS.navy,
+        padding: '60px 24px 32px',
       }}
     >
-      <p
+      <div
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 13,
-          fontWeight: 400,
-          letterSpacing: '0.2em',
-          color: '#fff',
-          marginBottom: 16,
+          maxWidth: 1280,
+          margin: '0 auto',
         }}
       >
-        AZURE TOWER JAKARTA &middot; &copy; 2026
-      </p>
-      <p
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 12,
-          fontWeight: 300,
-          color: '#888',
-        }}
-      >
-        Made with &hearts; by{' '}
-        <a
-          href="https://creativism.id"
+        {/* Top */}
+        <div
           style={{
-            color: '#fff',
-            textDecoration: 'none',
-            transition: 'color 0.3s ease',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: 48,
+            flexWrap: 'wrap',
+            gap: 32,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#CCC')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#fff')}
-          target="_blank"
-          rel="noopener noreferrer"
+          className="footer-top"
         >
-          Creativism
-        </a>
-      </p>
+          <div>
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 22,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                color: COLORS.white,
+                marginBottom: 8,
+              }}
+            >
+              AZURE<span style={{ color: COLORS.primary }}>.</span>
+            </p>
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 14,
+                color: 'rgba(255,255,255,0.5)',
+                maxWidth: 280,
+                lineHeight: 1.6,
+              }}
+            >
+              Luxury high-rise living in the heart of Jakarta.
+              Where the sky meets your home.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }} className="footer-links">
+            <div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: COLORS.white, marginBottom: 16, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                Explore
+              </p>
+              {['About', 'Features', 'Units', 'Amenities'].map((item) => (
+                <p key={item} style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 10, cursor: 'pointer' }}>
+                  {item}
+                </p>
+              ))}
+            </div>
+            <div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: COLORS.white, marginBottom: 16, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                Contact
+              </p>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 10 }}>+62 21 5088 8800</p>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 10 }}>living@azuretower.id</p>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 10 }}>SCBD Lot 18, Jakarta</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', marginBottom: 24 }} />
+
+        {/* Bottom */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.4)',
+            }}
+          >
+            &copy; 2026 Azure Tower Jakarta. All rights reserved.
+          </p>
+          <p
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.4)',
+            }}
+          >
+            Made with &hearts; by{' '}
+            <a
+              href="https://creativism.id"
+              style={{
+                color: COLORS.primary,
+                textDecoration: 'none',
+                fontWeight: 500,
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primaryLight)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Creativism
+            </a>
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }
 
-/* ─────────────────────────── RESPONSIVE STYLES ─────────────────── */
+/* ─────────────────────────── RESPONSIVE STYLES ─────────────────────────── */
 function ResponsiveStyles() {
   return (
     <style>{`
+      /* Section padding responsive */
+      .section-padding {
+        padding-top: 80px !important;
+        padding-bottom: 80px !important;
+      }
+      @media (min-width: 1024px) {
+        .section-padding {
+          padding-top: 128px !important;
+          padding-bottom: 128px !important;
+        }
+      }
+
+      /* Navigation */
       @media (max-width: 768px) {
-        .residence-row {
+        .nav-links-desktop { display: none !important; }
+        .nav-hamburger { display: block !important; }
+      }
+
+      /* Hero stats */
+      @media (max-width: 600px) {
+        .hero-stats {
+          gap: 24px !important;
+        }
+      }
+
+      /* About */
+      @media (max-width: 900px) {
+        .about-inner {
           flex-direction: column !important;
-          gap: 30px !important;
-          padding: 40px 0 !important;
+          gap: 40px !important;
         }
-        .residence-row .residence-img-wrap {
-          flex: 1 1 100% !important;
+        .about-image img {
+          height: 350px !important;
         }
-        .residence-row .residence-img-wrap img {
-          height: 240px !important;
+      }
+
+      /* Features grid */
+      @media (max-width: 900px) {
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+      @media (max-width: 600px) {
+        .features-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
+      /* Units grid */
+      @media (max-width: 1024px) {
+        .units-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+      @media (max-width: 600px) {
+        .units-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
+      /* Amenities grid */
+      @media (max-width: 900px) {
+        .amenities-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+      @media (max-width: 600px) {
+        .amenities-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
+      /* Location */
+      @media (max-width: 900px) {
+        .location-inner {
+          flex-direction: column !important;
+          gap: 32px !important;
+        }
+        .location-image > div {
+          min-height: 280px !important;
+        }
+      }
+
+      /* Contact */
+      @media (max-width: 900px) {
+        .contact-inner {
+          flex-direction: column !important;
+          gap: 40px !important;
+        }
+      }
+
+      /* Footer */
+      @media (max-width: 600px) {
+        .footer-top {
+          flex-direction: column !important;
+        }
+        .footer-links {
+          flex-direction: column !important;
+          gap: 32px !important;
         }
       }
     `}</style>
@@ -1194,10 +1885,11 @@ export default function Home() {
       <ResponsiveStyles />
       <Navigation />
       <HeroSection />
-      <PhilosophySection />
-      <ResidencesSection />
+      <AboutSection />
       <FeaturesSection />
-      <GallerySection />
+      <UnitsSection />
+      <AmenitiesSection />
+      <LocationSection />
       <ContactSection />
       <Footer />
     </>

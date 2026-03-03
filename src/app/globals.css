@@ -1,18 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
+  --primary: #0078D4;
+  --primary-dark: #005A9E;
+  --primary-light: #00B4D8;
+  --navy: #1B2838;
   --white: #FFFFFF;
-  --black: #000000;
-  --gray: #888888;
-  --light: #F5F5F5;
-  --dark-text: #111111;
-  --accent-line: #CCCCCC;
+  --off-white: #F0F8FF;
+  --text-dark: #1A1A2E;
+  --text-medium: #4A5568;
+  --text-light: #718096;
+  --border: #E2E8F0;
 }
 
 @theme inline {
   --color-background: var(--white);
-  --color-foreground: var(--dark-text);
+  --color-foreground: var(--text-dark);
   --font-headline: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
@@ -29,7 +33,7 @@ html {
 
 body {
   background: var(--white);
-  color: var(--dark-text);
+  color: var(--text-dark);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
@@ -40,22 +44,22 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--white);
+  background: var(--off-white);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-line);
+  background: var(--primary);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gray);
+  background: var(--primary-dark);
 }
 
 /* Animations */
 @keyframes fadeInUp {
   from {
-    opacity: 0.3;
+    opacity: 0;
     transform: translateY(30px);
   }
   to {
@@ -66,7 +70,7 @@ body {
 
 @keyframes fadeIn {
   from {
-    opacity: 0.3;
+    opacity: 0;
   }
   to {
     opacity: 1;
@@ -75,7 +79,7 @@ body {
 
 @keyframes slideInLeft {
   from {
-    opacity: 0.3;
+    opacity: 0;
     transform: translateX(-40px);
   }
   to {
@@ -86,7 +90,7 @@ body {
 
 @keyframes slideInRight {
   from {
-    opacity: 0.3;
+    opacity: 0;
     transform: translateX(40px);
   }
   to {
@@ -113,39 +117,17 @@ body {
   }
 }
 
-.animate-on-scroll {
-  opacity: 1;
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.animate-on-scroll.fade-up {
-  animation: fadeInUp 0.8s ease forwards;
-}
-
-.animate-on-scroll.fade-in {
-  animation: fadeIn 0.8s ease forwards;
-}
-
-.animate-on-scroll.slide-left {
-  animation: slideInLeft 0.8s ease forwards;
-}
-
-.animate-on-scroll.slide-right {
-  animation: slideInRight 0.8s ease forwards;
-}
-
-/* Grayscale image treatment */
-.img-mono {
-  filter: grayscale(100%);
-  transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.img-mono:hover {
-  filter: grayscale(0%);
-}
-
 /* Selection color */
 ::selection {
-  background: #111111;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--white);
+}
+
+/* Focus styles */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
 }
